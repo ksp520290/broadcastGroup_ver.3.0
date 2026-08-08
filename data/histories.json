@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "fileId": 1,
+    "editor": "管理者",
+    "action": "CREATE",
+    "targetName": "メインスタジオ",
+    "before": null,
+    "after": { "id": 1, "name": "メインスタジオ", "type": "folder" },
+    "createdAt": "2026-01-10T09:00:00Z"
+  },
+  {
+    "id": 2,
+    "fileId": 2,
+    "editor": "管理者",
+    "action": "CREATE",
+    "targetName": "デジタルミキサー X32",
+    "before": null,
+    "after": { "id": 2, "name": "デジタルミキサー X32", "type": "file", "quantity": 1 },
+    "createdAt": "2026-01-10T09:15:00Z"
+  }
+]
