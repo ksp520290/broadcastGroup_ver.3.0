@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>放送班 機材管理・自由配置システム (管理画面)</title>
+  <title>機材管理システム</title>
   <link rel="manifest" href="manifest.json">
   <style>
     :root {
@@ -245,8 +245,8 @@
 <body>
   <header>
     <div class="header-title">
-      <h1>放送班 機材管理・自由配置システム</h1>
-      <p>Broadcast Equipment Management System (管理者モード)</p>
+      <h1>機材管理システム</h1>
+      <p>Broadcast Administar </p>
     </div>
     <div class="header-nav">
       <button class="btn btn-success" id="btnAddFile">新規機材追加</button>
@@ -291,7 +291,7 @@
         </div>
         <div class="form-group">
           <label>Repository (リポジトリ名)</label>
-          <input type="text" id="ghRepo" placeholder="例: broadcast-system">
+          <input type="text" id="ghRepo" value=broadcastGroup_ver.3.0>
         </div>
         <div class="form-group">
           <label>Branch (ブランチ)</label>
@@ -519,36 +519,9 @@
       return { content, sha: json.sha };
     }
 
-    /*async function putGitHubFile(path, contentStr, sha, message) {
-      const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${path}`;
-      const encodedContent = btoa(unescape(encodeURIComponent(contentStr)));
-      const body = {
-        message: message || "Update data",
-        content: encodedContent,
-        branch: ghConfig.branch
-      };
-      if (sha) body.sha = sha;
-
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${ghConfig.pat}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || `HTTP Error ${res.status}`);
-      }
-      const json = await res.json();
-      return json.content.sha;
-    }*/
-
     async function putGitHubFile(path, contentStr, sha, message) {
       const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${path}`;
-
+    
       // 1. 引数で sha が渡されていない場合、GitHubから最新の sha を自動取得する
       let targetSha = sha;
       if (!targetSha) {
@@ -567,22 +540,22 @@
           console.log("既存ファイルの sha 取得をスキップ（新規作成として処理します）", e);
         }
       }
-
+    
       // 2. 本文のエンコード（日本語などの文字化け対策）
       const encodedContent = btoa(unescape(encodeURIComponent(contentStr)));
-
+    
       // 3. 送信データの作成
       const body = {
         message: message || "Update data",
         content: encodedContent,
         branch: ghConfig.branch
       };
-
+    
       // sha が存在する場合は上書き指定としてリクエストに含める
       if (targetSha) {
         body.sha = targetSha;
       }
-
+    
       // 4. GitHub API に PUT リクエストを送信
       const res = await fetch(url, {
         method: 'PUT',
@@ -593,18 +566,16 @@
         },
         body: JSON.stringify(body)
       });
-
+    
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.message || `HTTP Error ${res.status}`);
       }
-
+    
       const json = await res.json();
       return json.content.sha;
     }
-
     /* 30日経過のゴミ箱データ自動削除 */
-    
     function cleanOldTrashData() {
       const now = new Date();
       const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
