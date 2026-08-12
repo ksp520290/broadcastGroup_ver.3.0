@@ -1,12 +1,58 @@
 [
   {
+    "id": 3,
+    "fileId": 1,
+    "editor": "管理者",
+    "action": "UPDATE",
+    "targetName": "放送室",
+    "before": {
+      "id": 1,
+      "name": "メインスタジオ",
+      "type": "folder",
+      "quantity": 0,
+      "attribute": "#スタジオ #一階",
+      "description": "主要な放送機材が設置されているメインルーム",
+      "image": "",
+      "parentId": null,
+      "x": 40,
+      "y": 40,
+      "w": 300,
+      "h": 200,
+      "deletedAt": null,
+      "createdAt": "2026-01-10T09:00:00Z",
+      "updatedAt": "2026-01-10T09:00:00Z"
+    },
+    "after": {
+      "id": 1,
+      "name": "放送室",
+      "type": "folder",
+      "quantity": 0,
+      "attribute": "#スタジオ #一階",
+      "description": "主要な放送機材が設置されているメインルーム",
+      "image": "",
+      "parentId": null,
+      "x": 40,
+      "y": 40,
+      "w": 300,
+      "h": 200,
+      "deletedAt": null,
+      "createdAt": "2026-01-10T09:00:00Z",
+      "updatedAt": "2026-08-12T08:06:55.725Z"
+    },
+    "createdAt": "2026-08-12T08:06:55.726Z"
+  },
+  {
     "id": 1,
     "fileId": 1,
     "editor": "管理者",
     "action": "CREATE",
     "targetName": "メインスタジオ",
     "before": null,
-    "after": { "id": 1, "name": "メインスタジオ", "type": "folder" },
+    "after": {
+      "id": 1,
+      "name": "メインスタジオ",
+      "type": "folder"
+    },
     "createdAt": "2026-01-10T09:00:00Z"
   },
   {
@@ -16,7 +62,12 @@
     "action": "CREATE",
     "targetName": "デジタルミキサー X32",
     "before": null,
-    "after": { "id": 2, "name": "デジタルミキサー X32", "type": "file", "quantity": 1 },
+    "after": {
+      "id": 2,
+      "name": "デジタルミキサー X32",
+      "type": "file",
+      "quantity": 1
+    },
     "createdAt": "2026-01-10T09:15:00Z"
   }
 ]
