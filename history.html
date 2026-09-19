@@ -226,23 +226,37 @@
     const modalBody = document.getElementById('modalBody');
 
     async function init() {
+      requireLogin();
       await loadHistories();
       setupEventListeners();
       render();
     }
 
+    // admin.html でログイン済みの場合のみ閲覧可能（URL非公開運用の補助）
+    function requireLogin() {
+      try {
+        const raw = sessionStorage.getItem('bg_admin_session');
+        if (!raw) {
+          alert('管理者ログインが必要です。管理画面からログインしてください。');
+          window.location.href = 'admin.html';
+        }
+      } catch (e) {
+        window.location.href = 'admin.html';
+      }
+    }
+
     async function loadHistories() {
       try {
         const res = await fetch('data/histories.json');
-        if (res.ok) {
-          state.histories = await res.json();
-        } else {
-          state.histories = [];
-        }
+        state.histories = res.ok ? await res.json() : [];
       } catch (e) {
         console.error("Histories load failed:", e);
         state.histories = [];
       }
+      try {
+        const resF = await fetch('data/files.json');
+        state.files = resF.ok ? await resF.json() : [];
+      } catch (e) { state.files = []; }
     }
 
     function setupEventListeners() {
@@ -342,7 +356,22 @@
         <p><strong>対象:</strong> ${item.targetName} ${item.fileId ? `(ID: ${item.fileId})` : ''}</p>
         <p><strong>編集者:</strong> ${item.editor || '管理者'}</p>
         ${diffHtml}
+        <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+          <button class="btn" style="background:#f59e0b;" id="btnUndoThis">この操作を復元 (Undo)</button>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-sub); margin-top:0.5rem;">
+          Undoの確定にはadmin.html「データ」→「JSON」タブでbefore内容を反映し、GitHub保存を行ってください。
+        </p>
       `;
+
+      const undoBtn = document.getElementById('btnUndoThis');
+      if (undoBtn) {
+        undoBtn.onclick = () => {
+          sessionStorage.setItem('bg_pending_undo', JSON.stringify(item));
+          alert('復元データを準備しました。管理画面(admin.html)に移動して反映します。');
+          window.location.href = 'admin.html?undo=1';
+        };
+      }
 
       detailModal.classList.add('active');
     }

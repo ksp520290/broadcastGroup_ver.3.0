@@ -37,6 +37,15 @@
       align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       z-index: 10;
+      overflow: hidden;
+      max-height: 80px;
+      transition: max-height 0.28s ease, padding 0.28s ease, opacity 0.2s ease;
+    }
+    header.header-collapsed {
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      opacity: 0;
     }
     .header-title h1 { font-size: 1.25rem; font-weight: 700; }
     .header-title p { font-size: 0.75rem; color: #9ca3af; }
@@ -66,6 +75,7 @@
       align-items: center;
       gap: 1rem;
       z-index: 5;
+      position: relative;
     }
     .breadcrumbs { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 600; }
     .crumb-item { color: var(--primary); cursor: pointer; }
@@ -112,6 +122,8 @@
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       transform-origin: 0 0;
     }
     .node-card {
@@ -337,6 +349,47 @@
 
       // Canvas pan/zoom
       setupCanvasPanZoom();
+
+      // スマホ対応: 下にスクロールしたらタイトル部分(header)を隠す
+      setupHeaderAutoHide();
+    }
+
+    /* スクロールでヘッダーを隠す(スマホ対応) */
+    function setupHeaderAutoHide() {
+      const headerEl = document.querySelector('header');
+      let lastY = 0;
+      const THRESHOLD = 8;
+
+      function handleScrollDelta(deltaY, currentY) {
+        if (Math.abs(deltaY) < THRESHOLD) return;
+        if (deltaY > 0 && currentY > 40) {
+          headerEl.classList.add('header-collapsed');
+        } else if (deltaY < 0) {
+          headerEl.classList.remove('header-collapsed');
+        }
+      }
+
+      // グリッド/リスト表示は通常のスクロール
+      ['viewGrid', 'viewList'].forEach(id => {
+        const el = document.getElementById(id);
+        let prevTop = 0;
+        el.addEventListener('scroll', () => {
+          const top = el.scrollTop;
+          handleScrollDelta(top - prevTop, top);
+          prevTop = top;
+        }, { passive: true });
+      });
+
+      // 自由配置(キャンバス)表示は指のドラッグ方向で判定
+      let dragPrevY = null;
+      canvasViewport.addEventListener('pointerdown', (e) => { dragPrevY = e.clientY; });
+      window.addEventListener('pointermove', (e) => {
+        if (dragPrevY === null) return;
+        const dy = dragPrevY - e.clientY; // 上方向へドラッグ = 下スクロール相当
+        handleScrollDelta(dy, 100);
+        dragPrevY = e.clientY;
+      });
+      window.addEventListener('pointerup', () => { dragPrevY = null; });
     }
 
     function setMode(mode) {
@@ -444,10 +497,18 @@
       canvasNodes.forEach(node => {
         const el = document.createElement('div');
         el.className = `node-card ${node.type === 'folder' ? 'folder-node' : ''}`;
-        el.style.left = `${node.x || 0}px`;
-        el.style.top = `${node.y || 0}px`;
-        el.style.width = `${node.w || 220}px`;
-        el.style.height = `${node.h || 140}px`;
+        // サイズ・位置はすべて％指定（スマホでも見やすいレスポンシブ対応）
+        el.style.left = `${node.x || 0}%`;
+        el.style.top = `${node.y || 0}%`;
+        el.style.width = `${node.w || 16}%`;
+        el.style.height = `${node.h || 16}%`;
+
+        if (node.type === 'file' && node.image) {
+          const src = resolveImageSrc(node.image);
+          el.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), url('${src}')`;
+          el.style.backgroundSize = 'cover';
+          el.style.backgroundPosition = 'center';
+        }
 
         const title = document.createElement('div');
         title.className = 'node-title';
@@ -563,7 +624,7 @@
 
         if (node.type === 'file' && node.image) {
           const img = document.createElement('img');
-          img.src = node.image.startsWith('http') ? node.image : `images/${node.image}`;
+          img.src = resolveImageSrc(node.image);
           img.onerror = () => { img.style.display = 'none'; };
           card.appendChild(img);
         }
@@ -648,6 +709,17 @@
       }
     }
 
+    // 画像参照解決: http(s)ならそのまま、それ以外はローカル img/ フォルダを参照
+    // (GitHubリポジトリの img フォルダは Cloudflare Pages 公開時にそのまま
+    //  ローカルパス img/ として配信されるため、通常はこの解決だけで良い。
+    //  raw.githubusercontent.com を直接参照したい場合は node.image に完全URLを入れる)
+    function resolveImageSrc(image) {
+      if (!image) return '';
+      if (/^https?:\/\//i.test(image)) return image;
+      if (image.startsWith('img/') || image.startsWith('./img/')) return image;
+      return `img/${image}`;
+    }
+
     function parseTags(str) {
       if (!str) return '';
       return str.split(/[\s,]+/).map(t => {
@@ -660,7 +732,7 @@
       modalTitle.textContent = `${node.name} (${node.type === 'folder' ? 'フォルダ' : '詳細'})`;
       let imgHtml = '';
       if (node.image) {
-        const src = node.image.startsWith('http') ? node.image : `images/${node.image}`;
+        const src = resolveImageSrc(node.image);
         imgHtml = `<img src="${src}" alt="${node.name}" onerror="this.style.display='none'">`;
       }
 
@@ -672,10 +744,16 @@
         <p><strong>数量:</strong> ${node.quantity || 1}</p>
         <p><strong>属性:</strong> ${parseTags(node.attribute || '')}</p>
         <p><strong>説明:</strong> ${node.description || 'なし'}</p>
-        <p><strong>座標・サイズ:</strong> X:${node.x || 0}, Y:${node.y || 0}, W:${node.w || 220}, H:${node.h || 140}</p>
+        <p><strong>座標・サイズ(％):</strong> X:${node.x || 0}%, Y:${node.y || 0}%, W:${node.w || 16}%, H:${node.h || 16}%</p>
       `;
 
       detailModal.classList.add('active');
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').catch(() => {});
+      });
     }
 
     init();
