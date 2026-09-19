@@ -1,0 +1,16 @@
+[
+  {
+    "id": "admin",
+    "password": "admin1234",
+    "permanent": false,
+    "createdAt": "2026-09-09T00:00:00.000Z",
+    "updatedAt": "2026-09-09T00:00:00.000Z"
+  },
+  {
+    "id": "root_683967",
+    "password": "Ia6VI5tYaeNW77",
+    "permanent": true,
+    "createdAt": "2026-09-09T00:00:00.000Z",
+    "updatedAt": "2026-09-09T00:00:00.000Z"
+  }
+]
