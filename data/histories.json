@@ -1,5 +1,97 @@
 [
   {
+    "id": 242,
+    "fileId": null,
+    "editor": "admin",
+    "action": "IMPORT",
+    "targetName": "CSV一括インポート",
+    "before": null,
+    "after": {
+      "count": 153
+    },
+    "createdAt": "2026-10-20T08:41:50.611Z"
+  },
+  {
+    "id": 241,
+    "fileId": 19,
+    "editor": "admin",
+    "action": "LAYOUT_UPDATE",
+    "targetName": "2段目",
+    "before": {
+      "x": 0,
+      "y": 0,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "after": {
+      "x": 0,
+      "y": 20.22131777216369,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "createdAt": "2026-10-20T08:38:53.150Z"
+  },
+  {
+    "id": 240,
+    "fileId": 20,
+    "editor": "admin",
+    "action": "LAYOUT_UPDATE",
+    "targetName": "3段目",
+    "before": {
+      "x": 0,
+      "y": 0,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "after": {
+      "x": 0,
+      "y": 39.04797019458181,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "createdAt": "2026-10-20T08:38:49.841Z"
+  },
+  {
+    "id": 239,
+    "fileId": 21,
+    "editor": "admin",
+    "action": "LAYOUT_UPDATE",
+    "targetName": "4段目",
+    "before": {
+      "x": 0,
+      "y": 0,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "after": {
+      "x": 0,
+      "y": 61.20631539812227,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "createdAt": "2026-10-20T08:38:46.860Z"
+  },
+  {
+    "id": 238,
+    "fileId": 22,
+    "editor": "admin",
+    "action": "LAYOUT_UPDATE",
+    "targetName": "5段目",
+    "before": {
+      "x": 0,
+      "y": 0,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "after": {
+      "x": 0,
+      "y": 80.8077088036623,
+      "w": 15.71,
+      "h": 15.56
+    },
+    "createdAt": "2026-10-20T08:38:43.902Z"
+  },
+  {
     "id": 237,
     "fileId": 110,
     "editor": "admin",
